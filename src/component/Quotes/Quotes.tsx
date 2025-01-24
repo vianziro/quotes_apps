@@ -9,6 +9,9 @@ import { PuffLoader } from "react-spinners";
  */
 export default function Quotes() {
   // State to store the currently displayed quote
+  const [quoteHistory, setQuoteHistory] = useState<
+    Array<{ quote: string; author: string }>
+  >([]);
   const [quote, setQuote] = useState<{ quote: string; author: string }>({
     quote: "",
     author: "",
@@ -66,7 +69,9 @@ export default function Quotes() {
   function randomQuote() {
     if (quotes.length > 0) {
       const randomIndex = Math.floor(Math.random() * quotes.length);
-      setQuote(quotes[randomIndex]);
+      const newQuote = quotes[randomIndex];
+      setQuote(newQuote);
+      setQuoteHistory((prev) => [newQuote, ...prev]);
     }
   }
 
@@ -98,6 +103,17 @@ export default function Quotes() {
       <Button onClick={randomQuote} disabled={isLoading}>
         Generate
       </Button>
+
+      {quoteHistory.length > 0 && (
+        <div className={Style.historyContainer}>
+          {quoteHistory.map((historyQuote, index) => (
+            <div key={index} className={Style.card}>
+              <h4 className={Style.quote}>{`"${historyQuote.quote}"`}</h4>
+              <p className={Style.author}>{historyQuote.author}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
